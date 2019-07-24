@@ -44,7 +44,7 @@ SIM 管理画面でボタンの SIM のグループ名をクリックし、グ�
 カスタムヘッダには、下記のの２つを設定します
 
 - x-api-key: 運営より入手
-- x-slack-path: (自分で Slack Webhook を用意した場合には、Webhook URL のうち `/services/...` 以下全てをここに指定します)
+- x-slack-path: 運営より x-api-key を入手した場合は不要です。自分で Slack Webhook を用意した場合には、Webhook URL のうち `/services/...` 以下全てをここに指定します
 
 最後に、一番下の「保存」を押します。
 
