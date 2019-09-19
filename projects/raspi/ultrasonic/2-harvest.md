@@ -21,7 +21,7 @@ SORACOM Harvest Data を使うには、SIM グループの設定で、Harvest �
 
 SIM グループ設定の SORACOM Harvest 設定を開き、ON にして、保存を押します。
 
-![](image/8-1.png)
+![](images/8-1.png)
 
 ### プログラムのダウンロード・実行
 
@@ -71,11 +71,11 @@ pi@raspberrypi:~ $ python send_to_harvest.py
 
 ユーザーコンソールから、送信されたセンサーデータを確認してみましょう。SIM を選択して、操作ボタンあるいは右クリックメニューから「データを確認」を選びます。
 
-![](image/8-2.png)
+![](images/8-2.png)
 
 Harvest の画面に遷移し、グラフが表示されます。
 
-![](image/8-3.png)
+![](images/8-3.png)
 
 スクリプトのデフォルト設定では5秒に一度データが送信されるので、自動更新のボタンをオンにすると、グラフも自動的に更新されます。
 
