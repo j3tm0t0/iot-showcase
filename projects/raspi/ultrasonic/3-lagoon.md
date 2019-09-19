@@ -93,7 +93,7 @@ SORACOM Dynamic Image Panel ではデータに応じて表示する画像を動�
 
 設定タブで以下のように指定します。
 
-- 背景画像の URL: `https://binary-parser-playground-dev.s3.amazonaws.com/`
+- 背景画像の URL: `https://soracom-files.s3-ap-northeast-1.amazonaws.com/`
 
 次に、同じタブ内で「変数を追加」ボタンをクリックし、以下のように入力します。
 
