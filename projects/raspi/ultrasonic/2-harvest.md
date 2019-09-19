@@ -62,8 +62,8 @@ pi@raspberrypi:~ $ python send_to_harvest.py
 
 以下のようなエラーメッセージが出た場合には、設定を確認して下さい。
 
-- `{"message":"No group ID is specified: xxxxxxxxxxxxxxx"}`: SIM がグループに所属していない。
-- `{"message":"Configuration for SORACOM Harvest is not found"}`: SIM グループで Harvest を有効にしていない。
+- `ERROR: 接続がタイムアウトしました。"setup_air.sh" は実行していますか？`: USB ドングルが挿さっていないか、setup_air.sh を実行していない。
+- `ERROR: データ送信に失敗しました。Harvest が有効になっていない可能性があります。`: SIM をグループに所属させていないか、グループで Harvest を有効にしていない。
 
 ### Harvest によるデータの可視化の確認
 
