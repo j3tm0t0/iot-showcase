@@ -22,7 +22,6 @@
 - [おまけ](#section6)
   - [低速度撮影 (time-lapse) 動画を作成する](#section6-1)
   - [動画をストリーミングする](#section6-2)
-  - [画像を外部クラウドにアップロードする](#section6-3)
 
 ***
 
@@ -37,7 +36,7 @@
 このキットを使うと、以下のような事ができます。
 
 - 温度センサーからの温度データを、毎分アップロードし、可視化 (グラフ化) する
-- USB カメラで静止画を撮り、クラウドストレージにアップロードして、スマホなどから確認する
+- USB カメラで静止画を撮り、クラウドストレージにアップロードする
 - 撮りためた静止画を繋げて、タイムラプス動画を作成する
 - USB カメラで撮った動画のストリーミング再生をする
 
@@ -66,7 +65,7 @@
 ##  <a name="section4">温度センサー DS18B20+ を使う</a>
 ### <a name="section4-1">セットアップ</a>
 #### <a name="section4-1.1">配線する</a>
-Raspberry Pi の GPIO (General Purpose Input/Output) 端子に、温度センサーを接続します。温度センサーの向きにもご注意ください。
+Raspberry Pi の GPIO (General Purpose Input/Output) 端子に、温度センサーを接続します。電源ピン (赤いケーブル) は最後に挿してください。温度センサーの向きにもご注意ください。
 
 ![回路図](img/circuit.png)
 
@@ -77,18 +76,23 @@ Raspberry Pi の GPIO (General Purpose Input/Output) 端子に、温度センサ
 #### <a name="section4-1.2">Raspberry Pi でセンサーを使えるように設定する</a>
 Raspberry Pi の設定として、２つのファイルに追記して(以下の例では cat コマンドで追記していますが、vi や nano などのエディタを利用してもよいです)、適用するために再起動します。
 
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ sudo su -
-root@raspberrypi:~# cat >> /boot/config.txt
+sudo su -
+cat >> /boot/config.txt
 dtoverlay=w1-gpio-pullup,gpiopin=4
+```
 (Ctrl+Dを押します)
 
-root@raspberrypi:~# cat >> /etc/modules
+```
+cat >> /etc/modules
 w1-gpio
 w1-therm
+```
 (Ctrl+Dを押します)
 
-root@raspberrypi:~# reboot
+```
+reboot
 ```
 
 しばらく待つと、再起動が完了します。もう一度 Raspberry Pi にログインしてください。
@@ -98,6 +102,12 @@ root@raspberrypi:~# reboot
 
 ログインできたら、Raspberry Pi がセンサーを認識できているか確認します。再起動後、センサーは /sys/bus/w1/devices/ 以下にディレクトリとして現れます (28- で始まるものがセンサーです)。
 
+#### 実行コマンド
+```
+ls /sys/bus/w1/devices/
+```
+
+#### 実行例
 ```
 pi@raspberrypi:~ $ ls /sys/bus/w1/devices/
 28-0000072431d2  w1_bus_master1
@@ -108,6 +118,12 @@ pi@raspberrypi:~ $ ls /sys/bus/w1/devices/
 
 ファイル名は、センサー１つ１つ異なる ID がついています。センサー値を cat コマンドで読み出してみましょう。
 
+#### 実行コマンド
+```
+cat /sys/bus/w1/devices/28-*/w1_slave
+```
+
+#### 実行例
 ```
 pi@raspberrypi:~ $ cat /sys/bus/w1/devices/28-*/w1_slave
 ea 01 4b 46 7f ff 06 10 cd : crc=cd YES
@@ -148,21 +164,32 @@ SORACOM Harvest Data を使うには、Group の設定で、Harvest を有効に
 
 #### <a name="4-2.3">プログラムのダウンロード・実行</a>
 
-#### コマンド
+#### 実行コマンド
 ```
-curl -O http://soracom-files.s3.amazonaws.com/temperature.sh
-bash temperature.sh
+sudo wget http://soracom-files.s3.amazonaws.com/temperature.sh
+sudo chmod +x temperature.sh
+./temperature.sh
 ```
 
-#### 実行結果
+#### 実行例
 ```
-pi@raspberrypi:~ $ curl -O http://soracom-files.s3.amazonaws.com/temperature.sh
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100   519  100   519    0     0    310      0  0:00:01  0:00:01 --:--:--   310
-pi@raspberrypi:~ $ bash temperature.sh
-sending payload={"temperature":25.437}  ... done.
+pi@raspberrypi:~ $ sudo wget http://soracom-files.s3.amazonaws.com/temperature.sh
+--2019-09-27 01:45:54--  http://soracom-files.s3.amazonaws.com/temperature.sh
+Resolving soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)... 52.219.1.37
+Connecting to soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)|52.219.1.37|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 515 [text/plain]
+Saving to: ‘temperature.sh.3’
+
+temperature.sh.3              100%[=================================================>]     515  --.-KB/s    in 0.1s
+
+2019-09-27 01:46:00 (3.61 KB/s) - ‘temperature.sh.3’ saved [515/515]
+
+pi@raspberrypi:~ $ sudo chmod +x temperature.sh
+pi@raspberrypi:~ $ ./temperature.sh
 ```
+
+停止する場合は `Ctrl + C` (Ctrl キーを押しながら C キーを押す) を行ってください。
 
 ##### トラブルシュート
 以下のようなエラーメッセージが出た場合には、設定を確認して下さい。
@@ -186,7 +213,7 @@ SIMを選択して、操作から「データを確認」を選びます。
 さらに高度な可視化をしたい場合は、SORACOM Lagoon の利用を検討してください。
 
 ## <a name="section5">USBカメラを使う</a>
-Raspberry Pi に USBのカメラ(いわゆるWebカメラ)を接続してみましょう。本キットでは Buffalo 社の　BSWHD06M シリーズを使用しています。
+Raspberry Pi に USBのカメラ(いわゆるWebカメラ)を接続してみましょう。本キットでは Buffalo 社の BSWHD06M シリーズを使用しています。
 
 ### <a name="section5-1">セットアップ</a>
 #### <a name="section5-1.1">接続</a>
@@ -194,19 +221,27 @@ USB カメラは、Raspberry Pi の USB スロットに接続して下さい。
 ![カメラの設定](img/camera_setting.jpg)
 
 #### <a name="section5-1.2">パッケージのインストール</a>
-fswebcam というパッケージを使用します。apt-getコマンドでインストールして下さい。
+fswebcam というパッケージを使用します。apt コマンドでインストールして下さい。
 
+
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ sudo apt-get install -y fswebcam
+sudo apt install -y fswebcam
 ```
 
 > トラブルシュート：  
-> E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?  
-> と表示されたら、 sudo apt-get update を行ってから、再度 apt-get install してみてください
+> E: Unable to fetch some archives, maybe run apt update or try with --fix-missing?  
+> と表示されたら、 sudo apt update を行ってから、再度 apt install してみてください
 
 #### <a name="section5-1.3">コマンドラインによるテスト撮影</a>
 実際に撮影してみましょう。 -r オプションで解像度を指定する事が出来ます。
 
+#### 実行コマンド
+```
+fswebcam -r 640x480 test.jpg
+```
+
+#### 実行例
 ```
 pi@raspberrypi:~ $ fswebcam -r 640x480 test.jpg
 --- Opening /dev/video0...
@@ -226,6 +261,12 @@ scp コマンドなどを使って、PC にファイルを転送して開いて�
 
 新しい Terminal ウィンドウを開き以下のコマンドを実行します。
 
+#### 実行コマンド
+```
+scp pi@raspberrypi.local:test.jpg .
+```
+
+#### 実行例
 ```
 ~$ scp pi@raspberrypi.local:test.jpg .
 pi@raspberrypi.local's password:
@@ -255,12 +296,23 @@ SORACOM Napter (以降、Napter) は、IoT SIM を使用したデバイスへ簡
 #### <a name="section5-2.2">パッケージのインストール</a>
 Raspberry Pi を Web サーバにして、アクセスした時にリアルタイムの画像を確認できるようにしてみましょう。
 
-まずapache2 パッケージをインストールします
+まずapache2 パッケージをインストールします。
+
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ sudo apt-get install -y apache2
+sudo apt install -y apache2
 ```
 
 インストールが出来たら、CGIが実行出来るようにします。
+
+#### 実行コマンド
+```
+sudo ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/
+sudo gpasswd -a www-data video
+sudo service apache2 restart
+```
+
+#### 実行例
 ```
 pi@raspberrypi:~ $ sudo ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/
 
@@ -271,8 +323,16 @@ pi@raspberrypi:~ $ sudo service apache2 restart
 ```
 
 最後にCGIプログラムをダウンロードして設置します。
+
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ sudo wget -O /usr/lib/cgi-bin/camera https://soracom-files.s3.amazonaws.com/camera
+sudo wget /usr/lib/cgi-bin/camera https://soracom-files.s3.amazonaws.com/camera
+sudo chmod +x /usr/lib/cgi-bin/camera
+```
+
+#### 実行例
+```
+pi@raspberrypi:~ $ sudo wget /usr/lib/cgi-bin/camera https://soracom-files.s3.amazonaws.com/camera
 
 --2016-07-14 08:04:34--  https://soracom-files.s3.amazonaws.com/camera
 Resolving soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)... 54.231.225.58
@@ -295,14 +355,15 @@ SORACOM Napter を使うには、SIM の設定で、リモートオンデマン�
 'SIM 管理' 画面で、アクセスしたい SIM を選択し [操作] > [オンデマンドリモートアクセス] を選択してください。
 ![](img/enable_napter.png)
 
-"デバイス側ポート" を 80 に設定し、"OK" を選択します。
+"デバイス側ポート" を 80 に設定し、"TLS"のチェックボタンを有効にして"OK" を選択します。
 ![](img/configure_napter_80.png)
 
-以下のような画面が出ていれば有効化に成功しています。"HTTP: " に表示されている文字列 `http://[Napter のホスト名]:[ポート番号]` をコピーします。  
-※SORACOM Napter ではデバイスの IP アドレス・ポート番号を SORACOM 側で変換して異なる IP アドレス・ポート番号でアクセスできるようにしています。下図の場合はユーザーからの 37662 番ポートへのアクセスをデバイスの 80 番ポートに変換します。
+以下のような画面が出ていれば有効化に成功しています。"HTTPS: " に表示されている文字列 `http://[Napter のホスト名]:[ポート番号]` をコピーします。  
+※SORACOM Napter ではデバイスの IP アドレス・ポート番号を SORACOM 側で変換して異なる IP アドレス・ポート番号でアクセスできるようにしています。下図の場合はユーザーからの 39105 番ポートへのアクセスをデバイスの 80 番ポートに変換します。  
+※"TLS" を有効にすることでアクセス元の端末 (PCなど) から SORACOM プラットフォームまでを TLS で接続できます。SORACOM プラットフォームからデバイスは閉域網接続なため、セキュアなリモートアクセスを実現できます。
 ![](img/result_napter_80.png)
 
-お手元の PC のブラウザからパス`/cgi-bin/camera` を加えて `http://[Napter のホスト名]/cgi-bin/camera:[ポート番号]` にアクセスしてみましょう。リアルタイムな静止画が確認できます。
+お手元の PC のブラウザからパス`/cgi-bin/camera` を加えて `http://[Napter のホスト名]:[ポート番号]/cgi-bin/camera` にアクセスしてみましょう。リアルタイムな静止画が確認できます。
 
 リロードをするたびに、新しく画像を撮影しますので、撮影する対象の位置決めをする際などに使えると思います。  
 一度位置を固定したら、カメラの位置や対象物の下にビニールテープなどで位置がわかるように印をしておくとよいでしょう。
@@ -315,18 +376,27 @@ SORACOM Napter を使うには、SIM の設定で、リモートオンデマン�
 
 まず保存するディレクトリを作成して、アクセス権限を変更します。
 
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ sudo mkdir /var/www/html/images
+sudo mkdir /var/www/html/images
 
-pi@raspberrypi:~ $ sudo chown -R pi:pi /var/www/html/
+sudo chown -R pi:pi /var/www/html/
 ```
 
 #### <a name="section5-3.2">スクリプトのダウンロードと実行</a>
 
 次にスクリプトをダウンロードしてテスト実行してみましょう。
 
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ wget http://soracom-files.s3.amazonaws.com/take_picture.sh
+sudo wget http://soracom-files.s3.amazonaws.com/take_picture.sh
+sudo chmod +x take_picture.sh
+./take_picture.sh
+```
+
+#### 実行例
+```
+pi@raspberrypi:~ $ sudo wget http://soracom-files.s3.amazonaws.com/take_picture.sh
 --2016-07-19 02:19:01--  http://soracom-files.s3.amazonaws.com/take_picture.sh
 Resolving soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)... 54.231.228.9
 Connecting to soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)|54.231.228.9|:80... connected.
@@ -338,7 +408,7 @@ take_picture.sh           100%[====================================>]     444  -
 
 2016-07-19 02:19:01 (451 KB/s) - ‘take_picture.sh’ saved [444/444]
 
-pi@raspberrypi:~ $ chmod +x take_picture.sh
+pi@raspberrypi:~ $ sudo chmod +x take_picture.sh
 
 pi@raspberrypi:~ $ ./take_picture.sh
 checking current temperature ... 29.75 [c]
@@ -355,9 +425,9 @@ Writing JPEG image to '201607190219.jpg'.
 ```
 
 現在の温度を取得して、温度をキャプションとした画像を保存する事に成功しました。
-同じく SORACOM Napter でアクセスしてみましょう。`/images`パスを加えて
+同じく SORACOM Napter でアクセスしてみましょう。`/images/`パスを加えて
 
-`http://[Napter のホスト名]/images:[ポート番号]`  
+`https://[Napter のホスト名]:[ポート番号]/images/`  
 
 にアクセスするとファイルが出来ていると思います。
 
@@ -365,20 +435,20 @@ Writing JPEG image to '201607190219.jpg'.
 
 #### <a name="section5-3.3">cron設定</a>
 
-先ほどの温度センサー情報と同じく、cron の設定を行います。crontab を編集して設定を追加しましょう。
+定点観測をするために、cron を設定して定期的に画像を撮影しましょう。
 
 以下のコマンドを実行し、crontab の編集画面を開きます。
 
+#### 実行例
 ```
 pi@raspberrypi:~ $ crontab -e
-no crontab for root - using an empty one
+no crontab for pi - using an empty one
 
 Select an editor.  To change later, run 'select-editor'.
-  1. /bin/ed
-  2. /bin/nano        <---- easiest
-  3. /usr/bin/vim.tiny
-
-Choose 1-3 [2]: 2 （2を選択します）
+  1. /bin/nano        <---- easiest
+  2. /usr/bin/vim.tiny
+  3. /bin/ed
+Choose 1-3 [1]]: 1 （1を選択します）
 crontab: installing new crontab
 ```
 
@@ -404,7 +474,7 @@ crontab: installing new crontab
 
 のように毎時０分に撮影を行ったりする事で、間隔を間引いてあげるとよいでしょう。
 
-設定を書き込んだら、[Ctrl+W] を押して保存し、[Ctrl+X] を押して crontab 編集画面を閉じてください。
+設定を書き込んだら、[Ctrl+X] を押して保存し、[y] => [Enter] を押して crontab 編集画面を閉じてください。
 
 ### <a name="section5-4">画像を SORACOM Harvest Files にアップロードする</a>
 撮影した画像を安全かつ簡単に SORACOM 上のファイルサービスにアップロードしてみましょう。
@@ -417,30 +487,30 @@ SORACOM Harvest Files (以下、Harvest Files) とは、IoT デバイスから�
 >アップロードが完了したファイルの合計ファイルサイズ 1GB あたり 200 円/月  
 >Harvest Files に保存したファイルのエクスポート (ダウンロード) 通信量 1GB あたり 20 円
 
-**SORACOM Harvest Files を有効にする**
+#### <a name="5-4.2">SORACOM Harvest Files を有効にする</a>
 SORACOM Harvest Files を使うには、Group の設定で、Harvest Data を有効にする必要があります。
 
-グループ設定を開き、SORACOM Harvest Data を開いて、ON にして、保存を押します。
+グループ設定を開き、SORACOM Harvest Files を開いて、ON にして、保存を押します。
 
 ![](img/5-4-1.png)
 
-#### <a name="5-4.2">プログラムのダウンロード・実行</a>
+#### <a name="5-4.3">プログラムのダウンロード・実行</a>
 
-#### コマンド
+#### 実行コマンド
 ```
-curl -O http://soracom-files.s3.amazonaws.com/upload_harvestFiles.sh
-chmod +x take_picture.sh
-bash upload_harvestFiles.sh /var/www/html/image.jpg
+sudo wget http://soracom-files.s3.amazonaws.com/upload_harvestFiles.sh
+sudo chmod +x upload_harvestFiles.sh
+./upload_harvestFiles.sh /var/www/html/image.jpg
 ```
 
-#### 実行結果
+#### 実行例
 ```
-pi@raspberrypi:~ $ curl -O http://soracom-files.s3.amazonaws.com/upload_harvestFiles.sh
+pi@raspberrypi:~ $ sudo wget http://soracom-files.s3.amazonaws.com/upload_harvestFiles.sh
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   519  100   519    0     0    310      0  0:00:01  0:00:01 --:--:--   310
-pi@raspberrypi:~ $ chmod +x upload_harvestFiles.sh
-pi@raspberrypi:~ $ upload_harvestFiles.sh /var/www/html/image.jpg
+pi@raspberrypi:~ $ sudo chmod +x upload_harvestFiles.sh
+pi@raspberrypi:~ $ ./upload_harvestFiles.sh /var/www/html/image.jpg
 upload path is /images/upload.jpg
 uploading /var/www/html/image.jpg ...
 200
@@ -450,9 +520,9 @@ uploading /var/www/html/image.jpg ...
 以下のようなエラーメッセージが出た場合には、設定を確認して下さい。
 - `{"message":"No group ID is specified: xxxxxxxxxxxxxxx"}400` → SIM にグループが設定されていない
 - `{"message":"Harvest files is disabled. Please set { enabled: true }"}400`  → グループで Harvest を有効にしていない
-- `jpgファイルが指定されていません` → 実行結果例のように、引数にアップロードしたい画像のパスを指定していない
+- `jpgファイルが指定されていません` → 実行例のように、引数にアップロードしたい画像のパスを指定していない
 
-#### <a name="5-4.3">画像のアップロードを確認</a>
+#### <a name="5-4.4">画像のアップロードを確認</a>
 
 **ユーザーコンソールでアップロードされたファイルを確認する**
 
@@ -476,7 +546,7 @@ images/ フォルダの配下に画像ファイルがアップロードされて
 
 用途やニーズに合わせて頻度を調整してみるとよいでしょう。直近の画像を見たいときは SORACOM Napter でアクセスして見て、全画像は通信料金の安い夜間にスクリプトでアップロードするということも考えられます。
 
-頻度の調整は、やはり cron の設定で行います。
+頻度の調整は、やはり cron の設定で行います。毎分送る場合、5 分ごとに送る場合の記載例を紹介します。
 
 ##### 毎分
 ```
@@ -497,10 +567,11 @@ images/ フォルダの配下に画像ファイルがアップロードされて
 植物の成長や雲の動きなど、ゆっくり変化をするようなものを一定間隔(例えば１分毎)に撮影した画像を使って、仮に１秒間に 30 コマ使用すると１時間が動画では約２秒となるような動画を作成する事が出来ます。こういった映像を「低速度撮影 (タイムラプス) 映像」と呼びます。
 
 #### パッケージのインストール
-動画へのコンバートには、avconv というプログラムを利用しますので、下記のコマンドでパッケージをインストールして下さい。
+動画へのコンバートには、ffmpeg というプログラムを利用しますので、下記のコマンドでパッケージをインストールして下さい。
 
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ sudo apt-get install -y libav-tools
+sudo apt install -y ffmpeg
 ```
 
 非常に多くのパッケージをダウンロードしますので、少し時間がかかります。3G 接続を切って有線や Wifi 接続でインストールした方がよいかもしれません。3G 接続を切るには USB ドングルを抜きます。再度 USB ドングルを挿せば 3G 接続が有効になります。
@@ -508,8 +579,16 @@ pi@raspberrypi:~ $ sudo apt-get install -y libav-tools
 #### スクリプトのダウンロード
 スクリプトをダウンロードします。
 
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ wget http://soracom-files.s3.amazonaws.com/timelapse.sh
+sudo wget http://soracom-files.s3.amazonaws.com/timelapse.sh
+sudo chmod +x timelapse.sh
+./timelapse.sh
+```
+
+#### 実行例
+```
+pi@raspberrypi:~ $ sudo wget http://soracom-files.s3.amazonaws.com/timelapse.sh
 --2016-08-02 09:13:16--  http://soracom-files.s3.amazonaws.com/timelapse.sh
 Resolving soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)... 52.219.16.1
 Connecting to soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)|52.219.16.1|:80... connected.
@@ -521,7 +600,7 @@ timelapse.sh                100%[===========================================>]  
 
 2016-08-02 09:13:16 (41.6 MB/s) - ‘timelapse.sh’ saved [1262/1262]
 
-pi@raspberrypi:~ $ chmod +x timelapse.sh
+pi@raspberrypi:~ $ sudo chmod +x timelapse.sh
 
 pi@raspberrypi:~ $ ./timelapse.sh
 Usage: ./timelapse.sh [options] /full/path/to/output.mp4
@@ -547,56 +626,75 @@ Options:
 変換が終わった後の動画をすぐにブラウザで見れるように、/var/www/html/ 以下に動画ファイルを出力しておくと便利です。
 画像の枚数やラズパイのバージョンによって変換にかかる時間が変わるので、変換が終わるまで気長に待ちましょう。
 
+#### 実行コマンド
+```
+./timelapse.sh /var/www/html/timelapse.mp4
+```
+
+#### 実行例
 ```
 pi@raspberrypi:~ $ ./timelapse.sh /var/www/html/timelapse.mp4
--- 1. mkdir /var/tmp/time-lapse-2043 for workspace
+-- 1. mkdir /var/tmp/time-lapse-2889 for workspace
 -- 2. symlinking images as seqeuntial filename (it may take a while...)
-288 files found.
+28 files found.
 
 -- 3. converting jpeg files to MPEG-4 video (it may also take a while...)
-avconv version 11.6-6:11.6-1~deb8u1+rpi1, Copyright (c) 2000-2014 the Libav developers
-  built on Mar 22 2016 15:53:22 with gcc 4.9.2 (Raspbian 4.9.2-10)
+ffmpeg version 4.1.4-1+rpt1~deb10u1 Copyright (c) 2000-2019 the FFmpeg developers
+  built with gcc 8 (Raspbian 8.3.0-6+rpi1)
+  configuration: --prefix=/usr --extra-version='1+rpt1~deb10u1' --toolchain=hardened --libdir=/usr/lib/arm-linux-gnueabihf --incdir=/usr/include/arm-linux-gnueabihf --arch=arm --enable-gpl --disable-stripping --enable-avresample --disable-filter=resample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librsvg --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-omx-rpi --enable-mmal --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 22.100 / 56. 22.100
+  libavcodec     58. 35.100 / 58. 35.100
+  libavformat    58. 20.100 / 58. 20.100
+  libavdevice    58.  5.100 / 58.  5.100
+  libavfilter     7. 40.101 /  7. 40.101
+  libavresample   4.  0.  0 /  4.  0.  0
+  libswscale      5.  3.100 /  5.  3.100
+  libswresample   3.  3.100 /  3.  3.100
+  libpostproc    55.  3.100 / 55.  3.100
 Input #0, image2, from '%08d.jpg':
-  Duration: 00:00:09.60, start: 0.000000, bitrate: N/A
-    Stream #0.0: Video: mjpeg, yuvj420p, 640x480 [PAR 96:96 DAR 4:3], 30 fps, 30 tbn
-[libx264 @ 0x19d8040] using SAR=1/1
-[libx264 @ 0x19d8040] using cpu capabilities: ARMv6 NEON
-[libx264 @ 0x19d8040] profile High, level 3.0
-[libx264 @ 0x19d8040] 264 - core 142 r2431 a5831aa - H.264/MPEG-4 AVC codec - Copyleft 2003-2014 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=6 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
-Output #0, mp4, to '/var/www/html/timelapse.mp4':
-  Metadata:
-    encoder         : Lavf56.1.0
-    Stream #0.0: Video: libx264, yuv420p, 640x480 [PAR 1:1 DAR 4:3], q=-1--1, 30 fps, 30 tbn, 30 tbc
-    Metadata:
-      encoder         : Lavc56.1.0 libx264
+  Duration: 00:00:00.93, start: 0.000000, bitrate: N/A
+    Stream #0:0: Video: mjpeg, yuvj444p(pc, bt470bg/unknown/unknown), 640x480 [SAR 96:96 DAR 4:3], 30 fps, 30 tbr, 30 tbn, 30 tbc
 Stream mapping:
   Stream #0:0 -> #0:0 (mjpeg (native) -> h264 (libx264))
-Press ctrl-c to stop encoding
-frame=  288 fps=  8 q=-1.0 Lsize=     674kB time=9.50 bitrate= 581.1kbits/s    its/s
-video:669kB audio:0kB other streams:0kB global headers:0kB muxing overhead: 0.798229%
-[libx264 @ 0x19d8040] frame I:2     Avg QP:23.87  size: 21094
-[libx264 @ 0x19d8040] frame P:83    Avg QP:24.61  size:  5384
-[libx264 @ 0x19d8040] frame B:203   Avg QP:26.61  size:   960
-[libx264 @ 0x19d8040] consecutive B-frames:  0.7%  4.9% 33.3% 61.1%
-[libx264 @ 0x19d8040] mb I  I16..4:  5.7% 84.4% 10.0%
-[libx264 @ 0x19d8040] mb P  I16..4:  1.9%  6.2%  0.2%  P16..4: 53.0% 12.1%  6.7%  0.0%  0.0%    skip:20.0%
-[libx264 @ 0x19d8040] mb B  I16..4:  0.2%  0.4%  0.0%  B16..8: 28.8%  1.1%  0.2%  direct: 1.1%  skip:68.1%  L0:44.1% L1:53.2% BI: 2.7%
-[libx264 @ 0x19d8040] 8x8 transform intra:75.8% inter:82.4%
-[libx264 @ 0x19d8040] coded y,uvDC,uvAC intra: 56.5% 72.5% 32.5% inter: 14.1% 20.1% 0.6%
-[libx264 @ 0x19d8040] i16 v,h,dc,p: 33% 42% 13% 12%
-[libx264 @ 0x19d8040] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 21% 24% 37%  2%  3%  2%  5%  2%  6%
-[libx264 @ 0x19d8040] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 26% 29% 18%  3%  4%  3%  7%  4%  6%
-[libx264 @ 0x19d8040] i8c dc,h,v,p: 57% 23% 18%  2%
-[libx264 @ 0x19d8040] Weighted P-Frames: Y:49.4% UV:18.1%
-[libx264 @ 0x19d8040] ref P L0: 48.9% 22.8% 15.6%  9.1%  3.6%
-[libx264 @ 0x19d8040] ref B L0: 64.0% 28.6%  7.4%
-[libx264 @ 0x19d8040] ref B L1: 84.2% 15.8%
-[libx264 @ 0x19d8040] kb/s:569.96
+Press [q] to stop, [?] for help
+[swscaler @ 0x1066bd0] deprecated pixel format used, make sure you did set range correctly
+[libx264 @ 0x1035a80] using SAR=1/1
+[libx264 @ 0x1035a80] using cpu capabilities: ARMv6 NEON
+[libx264 @ 0x1035a80] profile High, level 3.0
+[libx264 @ 0x1035a80] 264 - core 155 r2917 0a84d98 - H.264/MPEG-4 AVC codec - Copyleft 2003-2018 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=6 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to '/var/www/html/timelapse.mp4':
+  Metadata:
+    encoder         : Lavf58.20.100
+    Stream #0:0: Video: h264 (libx264) (avc1 / 0x31637661), yuv420p, 640x480 [SAR 1:1 DAR 4:3], q=-1--1, 30 fps, 15360 tbn, 30 tbc
+    Metadata:
+      encoder         : Lavc58.35.100 libx264
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: -1
+frame=   28 fps=6.6 q=-1.0 Lsize=     161kB time=00:00:00.83 bitrate=1581.1kbits/s speed=0.197x
+video:160kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.696945%
+[libx264 @ 0x1035a80] frame I:2     Avg QP:24.20  size: 13077
+[libx264 @ 0x1035a80] frame P:10    Avg QP:26.02  size:  6315
+[libx264 @ 0x1035a80] frame B:16    Avg QP:26.26  size:  4599
+[libx264 @ 0x1035a80] consecutive B-frames: 17.9%  0.0% 53.6% 28.6%
+[libx264 @ 0x1035a80] mb I  I16..4: 15.8% 77.8%  6.4%
+[libx264 @ 0x1035a80] mb P  I16..4:  8.3% 22.7%  1.7%  P16..4: 53.3%  7.0%  2.8%  0.0%  0.0%    skip: 4.2%
+[libx264 @ 0x1035a80] mb B  I16..4:  1.5%  5.0%  0.5%  B16..8: 43.9%  9.1%  1.2%  direct:15.5%  skip:23.3%  L0:49.3% L1:48.0% BI: 2.7%
+[libx264 @ 0x1035a80] 8x8 transform intra:72.5% inter:87.3%
+[libx264 @ 0x1035a80] coded y,uvDC,uvAC intra: 52.4% 78.6% 45.6% inter: 29.6% 59.7% 2.1%
+[libx264 @ 0x1035a80] i16 v,h,dc,p: 13% 25% 10% 52%
+[libx264 @ 0x1035a80] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 15% 16% 31%  7%  7%  7%  5%  7%  6%
+[libx264 @ 0x1035a80] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 19% 19% 17%  7%  9% 10%  5%  9%  6%
+[libx264 @ 0x1035a80] i8c dc,h,v,p: 63% 19% 16%  3%
+[libx264 @ 0x1035a80] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x1035a80] ref P L0: 42.1%  4.6% 26.2% 27.1%
+[libx264 @ 0x1035a80] ref B L0: 62.7% 26.0% 11.4%
+[libx264 @ 0x1035a80] ref B L1: 93.2%  6.8%
+[libx264 @ 0x1035a80] kb/s:1396.13
 
 -- 4. cleanup...
 ```
 
-上記の例で出力されたファイルは、 `http://[Napter のホスト名]/timelapse.mp4:[ポート番号]` でアクセスする事が出来ます。動画再生には大きな通信量がかかりますので注意してください。
+上記の例で出力されたファイルは、 `http://[Napter のホスト名]:[ポート番号]/timelapse.mp4` でアクセスする事が出来ます。USB ドングルを挿しているか今一度確認してください。動画再生には大きな通信量がかかりますので注意してください。
 
 [サンプル動画](http://soracom-files.s3.amazonaws.com/timelapse.mp4)
 
@@ -606,7 +704,7 @@ video:669kB audio:0kB other streams:0kB global headers:0kB muxing overhead: 0.79
 動画の撮影・ストリーミングには MJPG-streamer というプログラムを利用しますので、下記のコマンドでパッケージをインストールして下さい。非常に多くのパッケージをダウンロードしますので、少し時間がかかります。3G接続を切って有線接続でインストールした方がよいかもしれません。3G 接続を切るには USB ドングルを抜きます。再度 USB ドングルを挿せば 3G 接続が有効になります。
 
 ```
-pi@raspberrypi:~ $ sudo apt-get install subversion libjpeg-dev imagemagick
+pi@raspberrypi:~ $ sudo apt install subversion libjpeg-dev imagemagick
 pi@raspberrypi:~ $ svn co https://svn.code.sf.net/p/mjpg-streamer/code/mjpg-streamer ~/mjpg-streamer
 pi@raspberrypi:~ $ cd ~/mjpg-streamer
 pi@raspberrypi:~ $ make
@@ -635,96 +733,7 @@ https://soracom.jp/products/
 
 作成された ホスト名、ポート番号をもとに下記の URL アクセスしてストリーミング動画を見ることができます。ストリーミング動画では大きな通信量が発生するのでご注意ください。
 
-`http://[Napter のホスト名]/stream_simple.html:[ポート番号]`
-
-### <a name="section6-3">画像を外部クラウドにアップロードする</a>
-SORACOM Harvest Files ではなく、外部クラウドのストレージサービスにもアップロードしてみましょう。インターネット経由でのアップロードとなるのでセキュリティが重要になります。このような場合、画像がどの SIM を持つデバイスから送信されたのかを証明するために、SORACOM Endorse を利用します。
-
-#### SORACOM Endorse とは
-SORACOM Endorse (以下、Endorse) は、Air SIM を使用しているデバイスに対して、SORACOM が認証プロバイダーとしてデバイスの認証サービスを提供します。 SIM を使用した認証を Wi-Fi などの SIM 以外の通信にも使うことが可能となります。
-
-![SORACOM Endorse](https://soracom.jp/img/fig_endorse01.png)
-
-Air SIM で接続後、Endorse に対して認証トークンの発行リクエストを送ると、Endorse が IMSI、IMEI などのデータを含んだ認証トークンを発行します。このトークンは SORACOM の秘密鍵で署名がされています。
-
-デバイスがこのトークンをサーバーに送信すると、サーバー側はこのトークンが SORACOM が発行した正しいものかどうかを、SORACOM の公開鍵で検証することができます。一旦トークンの受け渡しが終われば、サーバーは接続元のデバイスがどの SIM を持っているかを把握できるため、例えばそのままサーバーにログインするような仕組みを作ることもできます。そして一旦認証トークンの受け渡しが終わり認証が完了すれば、接続経路が Air SIM ではなく、Wi-Fi を使用していても、利用者のシステムではどの SIM から接続されているのかを確かなものとして扱うことができます。
-
-### システム構成
-下図のような仕組みで、画像をアップロードします。
-
-![構成図](img/upload_image.png)
-
-1. SORACOM Endorse にアクセスをしてトークンを取得
-2. 一番最近撮影した画像に、1. で得られたトークン情報をカスタムヘッダとして付与して、アップロード
-3. AWS 上のプログラム (Lambda) でヘッダ (トークン) が正しいものかどうかを確認し、正しいものと確認できた場合にのみ公開用の領域にコピー
-4. スマホ等から IMSI 毎の公開 URL にアクセスすると、アップロードされた画像にアクセスできます
-
-> 3 番のクラウド側の処理は、SORACOM 側で用意してあります
-
-### 設定
-#### SORACOM Endorse 設定
-SORACOM Endorse を有効にします。
-
-1. グループ設定画面で、SORACOM Endorse を開き、下記のように IMSI にチェックボックスを入れて、保存を押します
-![Endorse設定その１](img/endorse1.png)
-2. 下記のようなダイアログが表示されますので、OK を押します
-![Endorse設定その2](img/endorse2.png)
-
-SORACOM 側の設定は以上になります。
-
-> アカウント作成から１年以内であれば、無料利用枠に SORACOM Endorse の SIMカード１枚分が無料となります
-> ２枚以上で Endorse を有効にしたり、作成から１年以上経ちましたアカウントでは、追加の料金が発生する旨、お気をつけください
-
-### Raspberry Pi設定
-次に Raspberry Pi の設定を行います。
-
-#### PyJWT のインストール
-Python で Endorse で使われている JWT(JSON Web Token) を扱うためのライブラリ、PyJWT をインストールします。
-```
-pi@raspberrypi:~ $ sudo pip install pyjwt
-Downloading/unpacking pyjwt
-  Downloading PyJWT-1.4.1-py2.py3-none-any.whl
-Installing collected packages: pyjwt
-Successfully installed pyjwt
-Cleaning up...
-```
-
-#### スクリプトのダウンロード＆実行
-```
-pi@raspberrypi:~ $ wget http://soracom-files.s3.amazonaws.com/upload_image.py
---2016-07-22 05:27:36--  http://soracom-files.s3.amazonaws.com/upload_image.py
-Resolving soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)... 52.219.4.1
-Connecting to soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)|52.219.4.1|:80... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 1073 (1.0K) [text/plain]
-Saving to: ‘upload_image.py’
-
-upload_image.py                     100%[====================================================================>]   1.05K  --.-KB/s   in 0s
-
-2016-07-22 05:27:36 (32.9 MB/s) - ‘upload_image.py’ saved [1073/1073]
-
-pi@raspberrypi:~ $ python upload_image.py /var/www/html/image.jpg
-- SORACOM Endorse にアクセスして token を取得中 ...
-{
-    "aud": "soracom-endorse-audience",
-    "iss": "https://soracom.io",
-    "soracom-endorse-claim": {
-        "imsi": "440101111111111"
-    },
-    "jti": "kENUDfNrej4LE2N1VQawlQ",
-    "exp": 1469165906,
-    "iat": 1469165306,
-    "nbf": 1469165246,
-    "sub": "soracom-endorse"
-}
-- Amazon S3 にファイルをアップロード中 ...
-PUT https://soracom-handson.s3.amazonaws.com/incoming/camera/kENUDfNrej4LE2N1VQawlQ
-status: 200
-```
-
-最後に status が 200 となっていれば、アップロードが無事完了しています。
-
-アップロードが完了してから数秒おいて、 ```http://soracom-handson.s3.amazonaws.com/camera/{IMSI}``` にアクセスすると、アップロードした画像にアクセスすることが出来ます。
+`http://[Napter のホスト名]:[ポート番号]/stream_simple.html`
 
 おめでとうございます！皆さんは、IoT 体験キット 〜簡易監視カメラ〜を完了しました。SORACOM を使ったハンズオンを楽しんで頂けましたでしょうか？
 
