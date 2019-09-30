@@ -55,8 +55,8 @@
 
 ### <a name="section3-2">ソフトウェアの準備</a>
 
-1. Raspberry Pi の OS セットアップ (このテキストでは 2019-04-08-raspbian-stretch-lite.img で検証しました)
-2. Raspberry Pi の ssh 接続をセットアップ (またはモニターやキーボードを刺してコマンドが実行出来る)
+1. Raspberry Pi の OS セットアップ (このテキストでは 2019-07-10-raspbian-buster.img で検証しました)
+2. Raspberry Pi の ssh 接続をセットアップ (またはモニターやキーボードを挿してコマンドが実行出来る)
 3. Raspberry Pi + USB ドングルを用いて SORACOM Air への接続をセットアップ ([こちらのテキスト](../setup/setup.md)を参考に設定ください)
 
 > **注意**  
@@ -187,14 +187,15 @@ temperature.sh.3              100%[=============================================
 
 pi@raspberrypi:~ $ sudo chmod +x temperature.sh
 pi@raspberrypi:~ $ ./temperature.sh
+sending payload={"temperature":28.437}  ... done.
 ```
 
 停止する場合は `Ctrl + C` (Ctrl キーを押しながら C キーを押す) を行ってください。
 
-##### トラブルシュート
-以下のようなエラーメッセージが出た場合には、設定を確認して下さい。
-- `{"message":"No group ID is specified: xxxxxxxxxxxxxxx"}` → SIM にグループが設定されていない
-- `{"message":"Configuration for SORACOM Harvest is not found"}`  → グループで Harvest を有効にしていない
+> トラブルシュート
+> 以下のようなエラーメッセージが出た場合には、設定を確認して下さい。
+> * `{"message":"No group ID is specified: xxxxxxxxxxxxxxx"}` → SIM にグループが設定されていない
+> * `{"message":"Configuration for SORACOM Harvest is not found"}`  → グループで Harvest を有効にしていない
 
 #### <a name="section4-2-4">ユーザーコンソールで可視化されたデータを確認する</a>
 コンソールから、送信されたデータを確認してみましょう。
@@ -358,12 +359,12 @@ SORACOM Napter を使うには、SIM の設定で、リモートオンデマン�
 "デバイス側ポート" を 80 に設定し、"TLS"のチェックボタンを有効にして"OK" を選択します。
 ![](img/configure_napter_80.png)
 
-以下のような画面が出ていれば有効化に成功しています。"HTTPS: " に表示されている文字列 `http://[Napter のホスト名]:[ポート番号]` をコピーします。  
+以下のような画面が出ていれば有効化に成功しています。"HTTPS: " に表示されている文字列 `https://[Napter のホスト名]:[ポート番号]` をコピーします。  
 ※SORACOM Napter ではデバイスの IP アドレス・ポート番号を SORACOM 側で変換して異なる IP アドレス・ポート番号でアクセスできるようにしています。下図の場合はユーザーからの 39105 番ポートへのアクセスをデバイスの 80 番ポートに変換します。  
 ※"TLS" を有効にすることでアクセス元の端末 (PCなど) から SORACOM プラットフォームまでを TLS で接続できます。SORACOM プラットフォームからデバイスは閉域網接続なため、セキュアなリモートアクセスを実現できます。
 ![](img/result_napter_80.png)
 
-お手元の PC のブラウザからパス`/cgi-bin/camera` を加えて `http://[Napter のホスト名]:[ポート番号]/cgi-bin/camera` にアクセスしてみましょう。リアルタイムな静止画が確認できます。
+お手元の PC のブラウザからパス`/cgi-bin/camera` を加えて `https://[Napter のホスト名]:[ポート番号]/cgi-bin/camera` にアクセスしてみましょう。リアルタイムな静止画が確認できます。
 
 リロードをするたびに、新しく画像を撮影しますので、撮影する対象の位置決めをする際などに使えると思います。  
 一度位置を固定したら、カメラの位置や対象物の下にビニールテープなどで位置がわかるように印をしておくとよいでしょう。
@@ -516,11 +517,11 @@ uploading /var/www/html/image.jpg ...
 200
 ```
 
-##### トラブルシュート
-以下のようなエラーメッセージが出た場合には、設定を確認して下さい。
-- `{"message":"No group ID is specified: xxxxxxxxxxxxxxx"}400` → SIM にグループが設定されていない
-- `{"message":"Harvest files is disabled. Please set { enabled: true }"}400`  → グループで Harvest を有効にしていない
-- `jpgファイルが指定されていません` → 実行例のように、引数にアップロードしたい画像のパスを指定していない
+>  トラブルシュート
+> 以下のようなエラーメッセージが出た場合には、設定を確認して下さい。
+> * `{"message":"No group ID is specified: xxxxxxxxxxxxxxx"}400` → SIM にグループが設定されていない
+> * `{"message":"Harvest files is disabled. Please set { enabled: true }"}400`  → グループで Harvest を有効にしていない
+> * `jpgファイルが指定されていません` → 実行例のように、引数にアップロードしたい画像のパスを指定していない
 
 #### <a name="5-4.4">画像のアップロードを確認</a>
 
@@ -694,46 +695,67 @@ video:160kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing o
 -- 4. cleanup...
 ```
 
-上記の例で出力されたファイルは、 `http://[Napter のホスト名]:[ポート番号]/timelapse.mp4` でアクセスする事が出来ます。USB ドングルを挿しているか今一度確認してください。動画再生には大きな通信量がかかりますので注意してください。
+上記の例で出力されたファイルは、 `https://[Napter のホスト名]:[ポート番号]/timelapse.mp4` でアクセスする事が出来ます。USB ドングルを挿しているか今一度確認してください。動画再生には大きな通信量がかかりますので注意してください。
 
 [サンプル動画](http://soracom-files.s3.amazonaws.com/timelapse.mp4)
 
 ### <a name="section6-2">動画をストリーミングする</a>
 
 #### パッケージのインストール
-動画の撮影・ストリーミングには MJPG-streamer というプログラムを利用しますので、下記のコマンドでパッケージをインストールして下さい。非常に多くのパッケージをダウンロードしますので、少し時間がかかります。3G接続を切って有線接続でインストールした方がよいかもしれません。3G 接続を切るには USB ドングルを抜きます。再度 USB ドングルを挿せば 3G 接続が有効になります。
+動画の撮影・ストリーミングには motion というプログラムを利用しますので、下記のコマンドでパッケージをインストールして下さい。非常に多くのパッケージをダウンロードしますので、少し時間がかかります。3G接続を切って有線接続でインストールした方がよいかもしれません。3G 接続を切るには USB ドングルを抜きます。再度 USB ドングルを挿せば 3G 接続が有効になります。インストール後は、ストリーミング再生ができるように設定を変更します。
 
+#### 実行コマンド
 ```
-pi@raspberrypi:~ $ sudo apt install subversion libjpeg-dev imagemagick
-pi@raspberrypi:~ $ svn co https://svn.code.sf.net/p/mjpg-streamer/code/mjpg-streamer ~/mjpg-streamer
-pi@raspberrypi:~ $ cd ~/mjpg-streamer
-pi@raspberrypi:~ $ make
-```
-
-#### プログラムの実行
-```
-cd ~/mjpg-streamer
-sudo ./mjpg_streamer -i "./input_uvc.so -f 10 -r 320x240 -d /dev/video0 -y -n" -o "./output_http.so -w ./www -p 8080"
+sudo apt install -y motion
+sudo sed -i -e 's/ffmpeg_video_codec mkv/ffmpeg_video_codec mp4/g' /etc/motion/motion.conf
+sudo sed -i -e 's/^ffmpeg_output_movies on/ffmpeg_output_movies off/g' /etc/motion/motion.conf
+sudo sed -i -e 's/stream_localhost on/stream_localhost off/g' /etc/motion/motion.conf
 ```
 
-終了するときは `Ctrl+C` を押してください。
+#### apache 設定の追加
 
-#### SORACOM の設定
-上記のプログラムでは 8080 番ポートで動画ストリーミングが見られるように設定しました。
-SORACOM Napter も 8080 ポートに対して有効にしましょう。
+ストリーミング動画へアクセスするパスを設定するために apache に mod_proxy 設定を追加します。以下の例では cat コマンドで追記していますが、vi や nano などのエディタを利用してもよいです。適用するためにサービスを再起動します。
 
-![](img/configure_napter_8080.png)
+#### 実行コマンド
+```
+sudo su -
+cat >> /etc/apache2/apache2.conf
+# add proxy config for streaming by motion
+LoadModule proxy_module /usr/lib/apache2/modules/mod_proxy.so
+LoadModule proxy_http_module /usr/lib/apache2/modules/mod_proxy_http.so
+ProxyRequests Off
+ProxyPass /stream http://127.0.0.1:8081
+```
 
-また、ストリーミング動画では通信速度が必要となります。SIM 管理画面より [詳細] > [速度クラス変更] で通信速度を 's1.fast' にしましょう。
+(Ctrl+Dを 2 回押します)
+
+```
+sudo service apache2 restart
+```
+
+#### ストリーミングの実行
+以下のコマンドでストリーミングを開始します。
+
+#### 実行コマンド
+```
+sudo motion
+```
+
+下記の URL アクセスしてストリーミング動画を見ることができます。ストリーミング動画では大きな通信量が発生するのでご注意ください。
+
+`https://[Napter のホスト名]:[ポート番号]/stream`
+
+ストリーミングを終了するときは Raspberry Pi のウィンドウで `Ctrl+C` を押してください。
+
+なお、ストリーミング動画では通信速度が必要となります。SIM 管理画面より [詳細] > [速度クラス変更] で通信速度を 's1.fast' にしましょう。
 なお 3G 回線のため、SORACOM 側で最高速度に設定しても動画がリアルタイムに再生されないことがあります。リアルタイムな再生が重要であれば以下のサイトより LTE 対応の USB ドングルの購入をご検討ください。  
 https://soracom.jp/products/
 
 ![](img/change_speedClass1.png)
 ![](img/change_speedClass2.png)
 
-作成された ホスト名、ポート番号をもとに下記の URL アクセスしてストリーミング動画を見ることができます。ストリーミング動画では大きな通信量が発生するのでご注意ください。
 
-`http://[Napter のホスト名]:[ポート番号]/stream_simple.html`
+---
 
 おめでとうございます！皆さんは、IoT 体験キット 〜簡易監視カメラ〜を完了しました。SORACOM を使ったハンズオンを楽しんで頂けましたでしょうか？
 
