@@ -327,24 +327,23 @@ pi@raspberrypi:~ $ sudo service apache2 restart
 
 #### 実行コマンド
 ```
-sudo wget /usr/lib/cgi-bin/camera https://soracom-files.s3.amazonaws.com/camera
+sudo wget -O /usr/lib/cgi-bin/camera https://soracom-files.s3.amazonaws.com/camera
 sudo chmod +x /usr/lib/cgi-bin/camera
 ```
 
 #### 実行例
 ```
-pi@raspberrypi:~ $ sudo wget /usr/lib/cgi-bin/camera https://soracom-files.s3.amazonaws.com/camera
-
---2016-07-14 08:04:34--  https://soracom-files.s3.amazonaws.com/camera
-Resolving soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)... 54.231.225.58
-Connecting to soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)|54.231.225.58|:443... connected.
+pi@raspberrypi:~ $ sudo wget -O /usr/lib/cgi-bin/camera https://soracom-files.s3.amazonaws.com/camera
+--2019-10-01 16:33:36--  https://soracom-files.s3.amazonaws.com/camera
+Resolving soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)... 52.219.4.73
+Connecting to soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)|52.219.4.73|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 374 [text/plain]
-Saving to: ‘camera’
+Saving to: ‘/usr/lib/cgi-bin/camera’
 
-camera              100%[=====================>]     374  --.-KB/s   in 0s     
+/usr/lib/cgi-bin/camera                   100%[=====================================================================================>]     374  --.-KB/s    in 0.001s
 
-2016-07-14 08:04:35 (1.45 MB/s) - ‘camera’ saved [374/374]
+2019-10-01 16:33:36 (401 KB/s) - ‘/usr/lib/cgi-bin/camera’ saved [374/374]
 
 pi@raspberrypi:~ $ sudo chmod +x /usr/lib/cgi-bin/camera
 ```
@@ -568,7 +567,7 @@ images/ フォルダの配下に画像ファイルがアップロードされて
 植物の成長や雲の動きなど、ゆっくり変化をするようなものを一定間隔(例えば１分毎)に撮影した画像を使って、仮に１秒間に 30 コマ使用すると１時間が動画では約２秒となるような動画を作成する事が出来ます。こういった映像を「低速度撮影 (タイムラプス) 映像」と呼びます。
 
 #### パッケージのインストール
-動画へのコンバートには、ffmpeg というプログラムを利用しますので、下記のコマンドでパッケージをインストールして下さい。
+動画へのコンバートには、ffmpeg というプログラムを利用しますので、下記のコマンドでパッケージをインストールして下さい。既にインストールされている場合は不要です。
 
 #### 実行コマンド
 ```
@@ -582,29 +581,29 @@ sudo apt install -y ffmpeg
 
 #### 実行コマンド
 ```
-sudo wget http://soracom-files.s3.amazonaws.com/timelapse.sh
-sudo chmod +x timelapse.sh
-./timelapse.sh
+sudo wget http://soracom-files.s3.amazonaws.com/time-lapse.sh
+sudo chmod +x time-lapse.sh
+./time-lapse.sh
 ```
 
 #### 実行例
 ```
-pi@raspberrypi:~ $ sudo wget http://soracom-files.s3.amazonaws.com/timelapse.sh
---2016-08-02 09:13:16--  http://soracom-files.s3.amazonaws.com/timelapse.sh
+pi@raspberrypi:~ $ sudo wget http://soracom-files.s3.amazonaws.com/time-lapse.sh
+--2016-08-02 09:13:16--  http://soracom-files.s3.amazonaws.com/time-lapse.sh
 Resolving soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)... 52.219.16.1
 Connecting to soracom-files.s3.amazonaws.com (soracom-files.s3.amazonaws.com)|52.219.16.1|:80... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 1262 (1.2K) [text/plain]
-Saving to: ‘timelapse.sh’
+Saving to: ‘time-lapse.sh’
 
-timelapse.sh                100%[===========================================>]   1.23K  --.-KB/s   in 0s
+time-lapse.sh                100%[===========================================>]   1.23K  --.-KB/s   in 0s
 
-2016-08-02 09:13:16 (41.6 MB/s) - ‘timelapse.sh’ saved [1262/1262]
+2016-08-02 09:13:16 (41.6 MB/s) - ‘time-lapse.sh’ saved [1262/1262]
 
-pi@raspberrypi:~ $ sudo chmod +x timelapse.sh
+pi@raspberrypi:~ $ sudo chmod +x time-lapse.sh
 
-pi@raspberrypi:~ $ ./timelapse.sh
-Usage: ./timelapse.sh [options] /full/path/to/output.mp4
+pi@raspberrypi:~ $ ./time-lapse.sh
+Usage: ./time-lapse.sh [options] /full/path/to/output.mp4
 Options:
  -d /path/to/images/ (default=/var/www/html/images/)
  -f filter_string (default=no filter)
@@ -614,7 +613,7 @@ Options:
 引数なしで実行すると、コマンドの説明が表示されます。
 
 ```
-使い方: ./timelapse.sh [options] /full/path/to/output.mp4 # 出力するMP4ファイルへのフルパス
+使い方: ./time-lapse.sh [options] /full/path/to/output.mp4 # 出力するMP4ファイルへのフルパス
 Options:
  -d /path/to/images/ (default=/var/www/html/images/) # 元となる画像の格納場所
  -f filter_string (default=no filter) # ファイル名のフィルタ
@@ -629,12 +628,12 @@ Options:
 
 #### 実行コマンド
 ```
-./timelapse.sh /var/www/html/timelapse.mp4
+./time-lapse.sh /var/www/html/time-lapse.mp4
 ```
 
 #### 実行例
 ```
-pi@raspberrypi:~ $ ./timelapse.sh /var/www/html/timelapse.mp4
+pi@raspberrypi:~ $ ./time-lapse.sh /var/www/html/time-lapse.mp4
 -- 1. mkdir /var/tmp/time-lapse-2889 for workspace
 -- 2. symlinking images as seqeuntial filename (it may take a while...)
 28 files found.
@@ -663,7 +662,7 @@ Press [q] to stop, [?] for help
 [libx264 @ 0x1035a80] using cpu capabilities: ARMv6 NEON
 [libx264 @ 0x1035a80] profile High, level 3.0
 [libx264 @ 0x1035a80] 264 - core 155 r2917 0a84d98 - H.264/MPEG-4 AVC codec - Copyleft 2003-2018 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=6 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
-Output #0, mp4, to '/var/www/html/timelapse.mp4':
+Output #0, mp4, to '/var/www/html/time-lapse.mp4':
   Metadata:
     encoder         : Lavf58.20.100
     Stream #0:0: Video: h264 (libx264) (avc1 / 0x31637661), yuv420p, 640x480 [SAR 1:1 DAR 4:3], q=-1--1, 30 fps, 15360 tbn, 30 tbc
@@ -695,7 +694,7 @@ video:160kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing o
 -- 4. cleanup...
 ```
 
-上記の例で出力されたファイルは、 `https://[Napter のホスト名]:[ポート番号]/timelapse.mp4` でアクセスする事が出来ます。USB ドングルを挿しているか今一度確認してください。動画再生には大きな通信量がかかりますので注意してください。
+上記の例で出力されたファイルは、 `https://[Napter のホスト名]:[ポート番号]/time-lapse.mp4` でアクセスする事が出来ます。USB ドングルを挿しているか今一度確認してください。動画再生には大きな通信量がかかりますので注意してください。
 
 [サンプル動画](http://soracom-files.s3.amazonaws.com/timelapse.mp4)
 
