@@ -201,8 +201,8 @@ passwd: password updated successfully
 <img src="img/ak-020-4.jpg" width="49.5%">
 
 #### USB スロット(任意)に AK-020 を差し込む
-<img src=img/raspi-ak-020-1.jpg width="49.5%">
-<img src=img/raspi-ak-020-2.jpg width="49.5%">
+<img src="img/raspi-ak-020-1.jpg" width="49.5%">
+<img src="img/raspi-ak-020-2.jpg" width="49.5%">
 
 ### 接続の設定を行う
 Raspberry Pi 上で以下のようにコマンドを実行し、設定スクリプト(setup_air.sh) を実行します。
