@@ -92,10 +92,10 @@ SD カードをしっかりと奥まで差し込みます。
 - ユーザ名は `pi`
 - パスフレーズは `raspberry`
 
-<img src="img/teraterm-1.png" width=40%>
-<img src="img/teraterm-2.png" width=40%>
-<img src="img/teraterm-3.png" width=40%>
-<img src="img/teraterm-4.png" width=40%>
+<img src="img/teraterm-1.png" width="40%">
+<img src="img/teraterm-2.png" width="40%">
+<img src="img/teraterm-3.png" width="40%">
+<img src="img/teraterm-4.png" width="40%">
 
 #### トラブルシュート
 > 「無効なホスト」と表示される
@@ -138,7 +138,7 @@ This is a security risk - please login as the 'pi' user and type 'passwd' to set
 pi@raspberrypi:~ $
 ```
 
-<img src="img/terminal.png">
+![Mac Terminal](img/terminal.png)
 
 上記のような画面となれば、Raspberry Pi への SSH ログインが出来たことになります。
 
@@ -166,7 +166,8 @@ raspberry
 
 #### 実行結果
 
-```
+```git
+
 pi@raspberrypi:~ $ passwd
 Changing password for pi.
 Current password: raspberry (画面には表示されません)
@@ -184,24 +185,24 @@ passwd: password updated successfully
 ユーザコンソールに登録済みの SORACOM Air SIM を USB ドングルに入れ、Raspberry Pi と接続します。
 
 #### AK-020 の蓋を開ける
-<img src="img/ak-020-1.jpg" width=40%>
-<img src="img/ak-020-2.jpg" width=40%>
+<img src="img/ak-020-1.jpg" width="40%">
+<img src="img/ak-020-2.jpg" width="40%">
 
 #### SIM を台紙から外す
 一番外側を外して、標準サイズになるようにします
 
-<img src="img/air-sim-1.jpg" width=40%>
-<img src="img/air-sim-2.jpg" width=40%>
+<img src="img/air-sim-1.jpg" width="40%">
+<img src="img/air-sim-2.jpg" width="40%">
 
 #### SIM をスロットに差し込む
 いったん 平らなところに SIM を置き、押さえながら滑らせるようにしてスロットに入れます
 
-<img src="img/ak-020-3.jpg" width=40%>
-<img src="img/ak-020-4.jpg" width=40%>
+<img src="img/ak-020-3.jpg" width="40%">
+<img src="img/ak-020-4.jpg" width="40%">
 
 #### USB スロット(任意)に AK-020 を差し込む
-<img src=img/raspi-ak-020-1.jpg width=40%>
-<img src=img/raspi-ak-020-2.jpg width=40%>
+<img src=img/raspi-ak-020-1.jpg width="40%">
+<img src=img/raspi-ak-020-2.jpg width="40%">
 
 ### 接続の設定を行う
 Raspberry Pi 上で以下のようにコマンドを実行し、設定スクリプト(setup_air.sh) を実行します。
