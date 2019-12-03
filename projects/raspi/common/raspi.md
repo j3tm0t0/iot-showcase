@@ -72,7 +72,7 @@ SD カードをしっかりと奥まで差し込みます。
 
 最後に AC アダプターの Micro USB 端子を差し込みます。
 
-赤い LED は常時点灯し、緑色の LED がチカチカと点滅すると思います。しばらくすると落ち着くと思うので、そうなれば起動完了です。
+赤い LED は常時点灯し、緑色の LED がチカチカと激しく点滅します。しばらくすると LED の明滅が緩やかになり、起動完了となります。
 
 > 電源を切るには？  
 > Raspberry Pi 上では Linux OS が動作しており、電源を落とす前には OS をシャットダウンする必要があります(強制的に終了した場合、OSが起動しなくなるなどする可能性があります)。  
@@ -92,10 +92,10 @@ SD カードをしっかりと奥まで差し込みます。
 - ユーザ名は `pi`
 - パスフレーズは `raspberry`
 
-<img src="img/teraterm-1.png" width="40%">
-<img src="img/teraterm-2.png" width="40%">
-<img src="img/teraterm-3.png" width="40%">
-<img src="img/teraterm-4.png" width="40%">
+<img src="img/teraterm-1.png" width="49.5%">
+<img src="img/teraterm-2.png" width="49.5%">
+<img src="img/teraterm-3.png" width="49.5%">
+<img src="img/teraterm-4.png" width="49.5%">
 
 #### トラブルシュート
 > 「無効なホスト」と表示される
@@ -185,24 +185,24 @@ passwd: password updated successfully
 ユーザコンソールに登録済みの SORACOM Air SIM を USB ドングルに入れ、Raspberry Pi と接続します。
 
 #### AK-020 の蓋を開ける
-<img src="img/ak-020-1.jpg" width="40%">
-<img src="img/ak-020-2.jpg" width="40%">
+<img src="img/ak-020-1.jpg" width="49.5%">
+<img src="img/ak-020-2.jpg" width="49.5%">
 
 #### SIM を台紙から外す
 一番外側を外して、標準サイズになるようにします
 
-<img src="img/air-sim-1.jpg" width="40%">
-<img src="img/air-sim-2.jpg" width="40%">
+<img src="img/air-sim-1.jpg" width="49.5%">
+<img src="img/air-sim-2.jpg" width="49.5%">
 
 #### SIM をスロットに差し込む
 いったん 平らなところに SIM を置き、押さえながら滑らせるようにしてスロットに入れます
 
-<img src="img/ak-020-3.jpg" width="40%">
-<img src="img/ak-020-4.jpg" width="40%">
+<img src="img/ak-020-3.jpg" width="49.5%">
+<img src="img/ak-020-4.jpg" width="49.5%">
 
 #### USB スロット(任意)に AK-020 を差し込む
-<img src=img/raspi-ak-020-1.jpg width="40%">
-<img src=img/raspi-ak-020-2.jpg width="40%">
+<img src=img/raspi-ak-020-1.jpg width="49.5%">
+<img src=img/raspi-ak-020-2.jpg width="49.5%">
 
 ### 接続の設定を行う
 Raspberry Pi 上で以下のようにコマンドを実行し、設定スクリプト(setup_air.sh) を実行します。
