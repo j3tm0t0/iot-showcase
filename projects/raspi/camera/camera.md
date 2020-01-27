@@ -76,6 +76,8 @@ Raspberry Pi の GPIO (General Purpose Input/Output) 端子に、温度センサ
 #### <a name="section4-1.2">Raspberry Pi でセンサーを使えるように設定する</a>
 Raspberry Pi の設定として、２つのファイルに追記して(以下の例では cat コマンドで追記していますが、vi や nano などのエディタを利用してもよいです)、適用するために再起動します。
 
+* ログイン方法は[Raspberry Pi の設定の章](../common/raspi.md)を参照してください。
+projects/raspi/common/raspi.md
 #### 実行コマンド
 ```
 sudo su -
@@ -96,9 +98,6 @@ reboot
 ```
 
 しばらく待つと、再起動が完了します。もう一度 Raspberry Pi にログインしてください。
-* ログイン方法は[セットアップテキスト](../setup/setup.md#-raspberry-pi-への-ログイン)を参照してください。
-**↑要リンクの修正！！**
-
 
 ログインできたら、Raspberry Pi がセンサーを認識できているか確認します。再起動後、センサーは /sys/bus/w1/devices/ 以下にディレクトリとして現れます (28- で始まるものがセンサーです)。
 
