@@ -510,15 +510,15 @@ pi@raspberrypi:~ $ sudo wget http://soracom-files.s3.amazonaws.com/upload_harves
 100   519  100   519    0     0    310      0  0:00:01  0:00:01 --:--:--   310
 pi@raspberrypi:~ $ sudo chmod +x upload_harvestFiles.sh
 pi@raspberrypi:~ $ ./upload_harvestFiles.sh /var/www/html/image.jpg
-upload path is /images/upload.jpg
+upload path is /images/image.jpg
 uploading /var/www/html/image.jpg ...
-200
+success!
 ```
 
 >  トラブルシュート
 > 以下のようなエラーメッセージが出た場合には、設定を確認して下さい。
-> * `{"message":"No group ID is specified: xxxxxxxxxxxxxxx"}400` → SIM にグループが設定されていない
-> * `{"message":"Harvest files is disabled. Please set { enabled: true }"}400`  → グループで Harvest を有効にしていない
+> * `failure! {"message":"No group ID is specified: xxxxxxxxxxxxxxx"}` → SIM にグループが設定されていない
+> * `failure! {"message":"Harvest files is disabled. Please set { enabled: true }"}`  → グループで Harvest を有効にしていない
 > * `jpgファイルが指定されていません` → 実行例のように、引数にアップロードしたい画像のパスを指定していない
 
 #### <a name="5-4.4">画像のアップロードを確認</a>
